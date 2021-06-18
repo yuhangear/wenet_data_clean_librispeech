@@ -53,6 +53,7 @@ if [ ! -z "$steps" ]; then
   for x in $(echo $steps|sed 's/[,:]/ /g'); do
     index=$(printf "%02d" $x);
     declare step$index=1
+    echo $step$index
   done
 fi
 
