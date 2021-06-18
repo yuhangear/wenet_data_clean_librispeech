@@ -8,8 +8,8 @@
 
 steps=
 nj=10
-cmd="slurm.pl  "
-train_cmd="slurm.pl "
+cmd="slurm.pl  --exclude=node0[3,4,5,6,7]"
+train_cmd="slurm.pl  --exclude=node0[3,4,5,6,7]"
 
 
 
@@ -100,7 +100,7 @@ if [ ! -z $step02 ]; then
     fbankdir=fbank
     # Generate the fbank features; by default 80-dimensional fbanks with pitch on each frame
     for x in dev_clean test_clean   train_clean_360; do
-        steps/make_fbank_pitch.sh --cmd "run.pl" --nj ${nj} --write_utt2num_frames true \
+        steps/make_fbank_pitch.sh --cmd "slurm.pl" --nj ${nj} --write_utt2num_frames true \
             data/${x} exp/make_fbank/${x} ${fbankdir}
         utils/fix_data_dir.sh data/${x}
     done
