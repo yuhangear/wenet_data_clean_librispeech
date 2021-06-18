@@ -2,7 +2,12 @@
 
 # Copyright 2019 Mobvoi Inc. All Rights Reserved.
 
-我修改了
+
+我下载了一个github的客户端
+我在本地修改了
+本地仓库会记录
+然后同步到github
+在NTU服务上再同步一次，就可以看到变化了
 
 . ./path.sh || exit 1;
 . ./cmd.sh || exit 1;
