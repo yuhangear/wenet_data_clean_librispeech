@@ -8,7 +8,7 @@
 
 steps=1
 nj=10
-cmd="slurm.pl --quiet"
+cmd="slurm.pl --quiet --exclude=node0[3-7] "
 
 
 
@@ -61,7 +61,6 @@ project_dir=$2
 
 echo $steps  $nj $source_data $project_dir
 
-exit 0
 
 
 # bpemode (unigram or bpe)
@@ -77,37 +76,35 @@ train_dev=dev
 recog_set="test_clean test_other dev_clean dev_other"
 recog_set="test_clean"
 
-if [ ! -z $step1 ]; then
-    echo "stage -1: Data Download"
-    for part in dev-clean test-clean dev-other test-other train-clean-100 train-clean-360 train-other-500; do
-        local/download_and_untar.sh ${datadir} ${data_url} ${part}
-    done
-fi
 
-if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
+
+
+
+datadir=$source_data
+if [ ! -z $step1 ]; then
     ### Task dependent. You have to make data the following preparation part by yourself.
     ### But you can utilize Kaldi recipes in most cases
     echo "stage 0: Data preparation"
-    for part in dev-clean test-clean dev-other test-other train-clean-100 train-clean-360 train-other-500; do
+    for part in dev-clean test-clean  train-clean-360 ; do
         # use underscore-separated names in data directories.
-        local/data_prep.sh ${datadir}/LibriSpeech/${part} data/${part//-/_}
+        local/data_prep.sh ${datadir}/${part} data/${part//-/_}
     done
 fi
 
-if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
+if [ ! -z $step2 ]; then
     ### Task dependent. You have to design training and dev sets by yourself.
     ### But you can utilize Kaldi recipes in most cases
     echo "stage 1: Feature Generation"
     fbankdir=fbank
     # Generate the fbank features; by default 80-dimensional fbanks with pitch on each frame
-    for x in dev_clean test_clean dev_other test_other train_clean_100 train_clean_360 train_other_500; do
+    for x in dev_clean test_clean   train_clean_360; do
         steps/make_fbank_pitch.sh --cmd "$train_cmd" --nj ${nj} --write_utt2num_frames true \
             data/${x} exp/make_fbank/${x} ${fbankdir}
         utils/fix_data_dir.sh data/${x}
     done
 
-    utils/combine_data.sh --extra_files utt2num_frames data/${train_set}_org data/train_clean_100 data/train_clean_360 data/train_other_500
-    utils/combine_data.sh --extra_files utt2num_frames data/${train_dev}_org data/dev_clean data/dev_other
+    utils/combine_data.sh --extra_files utt2num_frames data/${train_set}_org  data/train_clean_360 
+    utils/combine_data.sh --extra_files utt2num_frames data/${train_dev}_org data/dev_clean
 
     # remove utt having more than 3000 frames
     # remove utt having more than 400 characters
@@ -123,7 +120,7 @@ fi
 dict=data/lang_char/${train_set}_${bpemode}${nbpe}_units.txt
 bpemodel=data/lang_char/${train_set}_${bpemode}${nbpe}
 echo "dictionary: ${dict}"
-if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
+if [ ! -z $step3 ]; then
     ### Task dependent. You have to check non-linguistic symbols used in the corpus.
     echo "stage 2: Dictionary and Json Data Preparation"
     mkdir -p data/lang_char/
@@ -140,7 +137,7 @@ if [ ${stage} -le 2 ] && [ ${stop_stage} -ge 2 ]; then
     wc -l ${dict}
 fi
 
-if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
+if [ ! -z $step4 ]; then
     # Prepare wenet requried data
     echo "Prepare data, prepare requried format"
     for x in dev ${recog_set} ${train_set}; do
@@ -150,7 +147,7 @@ if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
 fi
 
 
-if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
+if [ ! -z $step5 ]; then
     # Training
     mkdir -p $dir
     INIT_FILE=$dir/ddp_init
@@ -185,7 +182,7 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
     wait
 fi
 
-if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
+if [ ! -z $step6 ]; then
     # Test model, please specify the model you want to test by --checkpoint
     # TODO, Add model average here
     mkdir -p $dir/test
@@ -230,7 +227,7 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
 
 fi
 
-if [ ${stage} -le 6 ] && [ ${stop_stage} -ge 6 ]; then
+if [ ! -z $step7 ]; then
     # Export the best model you want
     python wenet/bin/export_jit.py \
         --config $dir/train.yaml \
