@@ -2,6 +2,8 @@
 
 # Copyright 2019 Mobvoi Inc. All Rights Reserved.
 
+我修改了
+
 . ./path.sh || exit 1;
 . ./cmd.sh || exit 1;
 
