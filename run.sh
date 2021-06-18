@@ -100,7 +100,7 @@ if [ ! -z $step02 ]; then
     fbankdir=fbank
     # Generate the fbank features; by default 80-dimensional fbanks with pitch on each frame
     for x in dev_clean test_clean   train_clean_360; do
-        steps/make_fbank_pitch.sh --cmd "slurm.pl" --nj ${nj} --write_utt2num_frames true \
+        steps/make_fbank_pitch.sh --cmd "run.pl" --nj ${nj} --write_utt2num_frames true \
             data/${x} exp/make_fbank/${x} ${fbankdir}
         utils/fix_data_dir.sh data/${x}
     done
