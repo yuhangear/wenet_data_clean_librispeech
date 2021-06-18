@@ -6,7 +6,7 @@
 
 . ./path.sh || exit 1;
 
-steps=1
+steps=1-5
 nj=10
 cmd="slurm.pl --quiet --exclude=node0[3-7] "
 
@@ -86,10 +86,11 @@ if [ ! -z $step01 ]; then
     ### Task dependent. You have to make data the following preparation part by yourself.
     ### But you can utilize Kaldi recipes in most cases
     echo "stage 0: Data preparation"
-    for part in dev-clean test-clean  train-clean-360 ; do
+    for part in dev-clean test-clean   ; do
         # use underscore-separated names in data directories.
         local/data_prep.sh ${datadir}/${part} data/${part//-/_}
     done
+    local/data_prep.sh /data/users/zpz505/LibriSpeech/train-clean-360 data/train_clean_360
 fi
 
 if [ ! -z $step02 ]; then
