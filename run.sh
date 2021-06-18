@@ -6,9 +6,9 @@
 
 . ./path.sh || exit 1;
 
-steps=1-5
+steps=
 nj=10
-cmd="slurm.pl --quiet --exclude=node0[3-7] "
+cmd="slurm.pl --quiet --exclude=node0[8-9] "
 
 
 
@@ -156,7 +156,7 @@ if [ ! -z $step05 ]; then
     rm -f $INIT_FILE # delete old one before starting
     init_method=file://$(readlink -f $INIT_FILE)
     echo "$0: init method is $init_method"
-    num_gpus=$(echo $CUDA_VISIBLE_DEVICES | awk -F "," '{print NF}')
+    num_gpus=2
     # Use "nccl" if it works, otherwise use "gloo"
     dist_backend="nccl"
     cmvn_opts=
