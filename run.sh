@@ -82,7 +82,7 @@ recog_set="test_clean"
 
 
 datadir=$source_data
-if [ ! -z $step1 ]; then
+if [ ! -z $step01 ]; then
     ### Task dependent. You have to make data the following preparation part by yourself.
     ### But you can utilize Kaldi recipes in most cases
     echo "stage 0: Data preparation"
@@ -92,7 +92,7 @@ if [ ! -z $step1 ]; then
     done
 fi
 
-if [ ! -z $step2 ]; then
+if [ ! -z $step02 ]; then
     ### Task dependent. You have to design training and dev sets by yourself.
     ### But you can utilize Kaldi recipes in most cases
     echo "stage 1: Feature Generation"
@@ -121,7 +121,7 @@ fi
 dict=data/lang_char/${train_set}_${bpemode}${nbpe}_units.txt
 bpemodel=data/lang_char/${train_set}_${bpemode}${nbpe}
 echo "dictionary: ${dict}"
-if [ ! -z $step3 ]; then
+if [ ! -z $step03 ]; then
     ### Task dependent. You have to check non-linguistic symbols used in the corpus.
     echo "stage 2: Dictionary and Json Data Preparation"
     mkdir -p data/lang_char/
@@ -138,7 +138,7 @@ if [ ! -z $step3 ]; then
     wc -l ${dict}
 fi
 
-if [ ! -z $step4 ]; then
+if [ ! -z $step04 ]; then
     # Prepare wenet requried data
     echo "Prepare data, prepare requried format"
     for x in dev ${recog_set} ${train_set}; do
@@ -148,7 +148,7 @@ if [ ! -z $step4 ]; then
 fi
 
 
-if [ ! -z $step5 ]; then
+if [ ! -z $step05 ]; then
     # Training
     mkdir -p $dir
     INIT_FILE=$dir/ddp_init
@@ -183,7 +183,7 @@ if [ ! -z $step5 ]; then
     wait
 fi
 
-if [ ! -z $step6 ]; then
+if [ ! -z $step06 ]; then
     # Test model, please specify the model you want to test by --checkpoint
     # TODO, Add model average here
     mkdir -p $dir/test
@@ -228,7 +228,7 @@ if [ ! -z $step6 ]; then
 
 fi
 
-if [ ! -z $step7 ]; then
+if [ ! -z $step07 ]; then
     # Export the best model you want
     python wenet/bin/export_jit.py \
         --config $dir/train.yaml \
