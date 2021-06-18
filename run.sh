@@ -77,7 +77,7 @@ train_dev=dev
 recog_set="test_clean test_other dev_clean dev_other"
 recog_set="test_clean"
 
-
+set -eu
 
 
 
