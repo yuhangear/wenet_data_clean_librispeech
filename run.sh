@@ -3,25 +3,27 @@
 # Copyright 2019 Mobvoi Inc. All Rights Reserved.
 
 
-我下载了一个github的客户端
-我在本地修改了
-本地仓库会记录
-然后同步到github
-在NTU服务上再同步一次，就可以看到变化了
 
 . ./path.sh || exit 1;
-. ./cmd.sh || exit 1;
+
+steps=
+cmd="slurm.pl --quiet"
+
+nj=10
+
+
 
 # Use this to control how many gpu you use, It's 1-gpu training if you specify
 # just 1gpu, otherwise it's is multiple gpu training based on DDP in pytorch
 export CUDA_VISIBLE_DEVICES="0,1,2,3,4,5,6,7"
-stage=0 # start from 0 if you need to start from data preparation
-stop_stage=5
-# data
-data_url=www.openslr.org/resources/12
-# use your own data path
-datadir=/nfsa/diwu/open-dir
-nj=16
+
+
+
+
+
+
+
+
 # Optional train_config
 # 1. conf/train_transformer_large.yaml: Standard transformer
 train_config=conf/train_conformer_large.yaml
@@ -40,6 +42,27 @@ decode_modes="attention_rescoring ctc_greedy_search ctc_prefix_beam_search atten
 
 . utils/parse_options.sh || exit 1;
 
+
+steps=$(echo $steps | perl -e '$steps=<STDIN>;  $has_format = 0;
+  if($steps =~ m:(\d+)\-$:g){$start = $1; $end = $start + 10; $has_format ++;}
+        elsif($steps =~ m:(\d+)\-(\d+):g) { $start = $1; $end = $2; if($start == $end){}elsif($start < $end){ $end = $2 +1;}else{die;} $has_format ++; }
+      if($has_format > 0){$steps=$start;  for($i=$start+1; $i < $end; $i++){$steps .=":$i"; }} print $steps;' 2>/dev/null)  || exit 1
+
+if [ ! -z "$steps" ]; then
+  for x in $(echo $steps|sed 's/[,:]/ /g'); do
+    index=$(printf "%02d" $x);
+    declare step$index=1
+  done
+fi
+
+source_data=$1
+project_dir=$2
+
+echo $source_data $project_dir
+
+exit 0
+
+
 # bpemode (unigram or bpe)
 nbpe=5000
 bpemode=unigram
@@ -52,7 +75,8 @@ train_set=train_960
 train_dev=dev
 recog_set="test_clean test_other dev_clean dev_other"
 recog_set="test_clean"
-if [ ${stage} -le -1 ] && [ ${stop_stage} -ge -1 ]; then
+
+if [ ! -z $step1 ]; then
     echo "stage -1: Data Download"
     for part in dev-clean test-clean dev-other test-other train-clean-100 train-clean-360 train-other-500; do
         local/download_and_untar.sh ${datadir} ${data_url} ${part}
