@@ -6,10 +6,11 @@
 
 . ./path.sh || exit 1;
 
-steps=
+steps=1
+nj=10
 cmd="slurm.pl --quiet"
 
-nj=10
+
 
 
 
@@ -58,7 +59,7 @@ fi
 source_data=$1
 project_dir=$2
 
-echo $source_data $project_dir
+echo $steps  $nj $source_data $project_dir
 
 exit 0
 
