@@ -136,7 +136,7 @@ if [ ! -z $step03 ]; then
     tools/spm_train --input=data/lang_char/input.txt --vocab_size=${nbpe} --model_type=${bpemode} --model_prefix=${bpemodel} --input_sentence_size=100000000
     
 !yu
-    python tools/spm_encode --model=${bpemodel}.model --output_format=piece < data/lang_char/input.txt | tr ' ' '\n' | sort | uniq | awk '{print $0 " " NR+1}' >> ${dict}
+    python3.8 tools/spm_encode --model=${bpemodel}.model --output_format=piece < data/lang_char/input.txt | tr ' ' '\n' | sort | uniq | awk '{print $0 " " NR+1}' >> ${dict}
     num_token=$(cat $dict | wc -l)
     echo "<sos/eos> $num_token" >> $dict # <eos>
     wc -l ${dict}
