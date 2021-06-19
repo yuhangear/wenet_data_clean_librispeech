@@ -74,7 +74,7 @@ set -o pipefail
 
 train_set=train
 train_dev=dev
-recog_set="test_clean dev_clean "
+
 recog_set="test_clean"
 
 
