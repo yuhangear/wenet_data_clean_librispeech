@@ -150,7 +150,7 @@ if [ ! -z $step04 ]; then
     echo "Prepare data, prepare requried format"
     for x in dev  ${recog_set} ${train_set}; do
         tools/format_data.sh --nj ${nj} --feat data/$x/feats.scp --bpecode ${bpemodel}.model \
-            data/$x ${dict} > data/$x/format.data.tmp
+            data/$x ${dict} > data/$x/format.data
         echo "ok"
         # remove utt having more than 3000 frames
         # remove utt having more than 400 characters
