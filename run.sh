@@ -112,10 +112,6 @@ if [ ! -z $step02 ]; then
 yyh
 
 
-    # remove utt having more than 3000 frames
-    # remove utt having more than 400 characters
-    /home3/yuhang001/w2021/wenet/tools/remove_longshortdata.sh --maxframes 3000 --maxchars 400 data/${train_set}_org data/${train_set}
-    /home3/yuhang001/w2021/wenet/tools/remove_longshortdata.sh --maxframes 3000 --maxchars 400 data/${train_dev}_org data/${train_dev}
 
     # compute global CMVN
     compute-cmvn-stats --binary=false scp:data/${train_set}/feats.scp data/${train_set}/global_cmvn
@@ -148,7 +144,18 @@ if [ ! -z $step04 ]; then
     echo "Prepare data, prepare requried format"
     for x in dev ${recog_set} ${train_set}; do
         tools/format_data.sh --nj ${nj} --feat data/$x/feats.scp --bpecode ${bpemodel}.model \
-            data/$x ${dict} > data/$x/format.data
+            data/$x ${dict} > data/$x/format.data.tmp
+
+        # remove utt having more than 3000 frames
+        # remove utt having more than 400 characters
+        tools/remove_longshortdata.py \
+            --min_input_len 0.5 \
+            --max_input_len 20 \
+            --max_output_len 400 \
+            --max_output_input_ratio 10.0 \
+            --data_file data/$x/format.data.tmp \
+            --output_data_file data/$x/format.data
+
     done
 fi
 
