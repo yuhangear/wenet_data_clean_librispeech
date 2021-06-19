@@ -151,7 +151,7 @@ if [ ! -z $step04 ]; then
     for x in  ${recog_set} ${train_set}; do
         tools/format_data.sh --nj ${nj} --feat data/$x/feats.scp --bpecode ${bpemodel}.model \
             data/$x ${dict} > data/$x/format.data.tmp
-
+        echo "ok"
         # remove utt having more than 3000 frames
         # remove utt having more than 400 characters
         python3.8 tools/remove_longshortdata.py \
