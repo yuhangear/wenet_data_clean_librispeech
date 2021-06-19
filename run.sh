@@ -87,7 +87,7 @@ if [ ! -z $step01 ]; then
     ### But you can utilize Kaldi recipes in most cases
     echo "stage 0: Data preparation"
 
-    for part in dev-clean test-clean train_clean_360  ; do
+    for part in dev-clean test-clean   ; do
         # use underscore-separated names in data directories.
         local/data_prep.sh ${datadir}/${part} data/${part//-/_}
     done
