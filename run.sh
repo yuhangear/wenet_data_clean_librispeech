@@ -154,13 +154,13 @@ if [ ! -z $step04 ]; then
         echo "ok"
         # remove utt having more than 3000 frames
         # remove utt having more than 400 characters
-        tools/remove_longshortdata.py \
-            --min_input_len 0.5 \
-            --max_input_len 20 \
-            --max_output_len 400 \
-            --max_output_input_ratio 10.0 \
-            --data_file data/$x/format.data.tmp \
-            --output_data_file data/$x/format.data
+        # tools/remove_longshortdata.py \
+        #     --min_input_len 0.5 \
+        #     --max_input_len 20 \
+        #     --max_output_len 400 \
+        #     --max_output_input_ratio 10.0 \
+        #     --data_file data/$x/format.data.tmp \
+        #     --output_data_file data/$x/format.data
 
     done
 fi
