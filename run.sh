@@ -4,7 +4,7 @@
 
 
 
-. ./path.sh || exit 1;
+#. ./path.sh || exit 1;
 
 steps=
 nj=10
