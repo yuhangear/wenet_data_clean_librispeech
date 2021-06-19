@@ -99,6 +99,8 @@ if [ ! -z $step02 ]; then
     echo "stage 1: Feature Generation"
     fbankdir=fbank
     # Generate the fbank features; by default 80-dimensional fbanks with pitch on each frame
+
+:<<yyh
     for x in dev_clean test_clean   train_clean_360; do
         steps/make_fbank_pitch.sh --cmd "slurm.pl" --nj ${nj} --write_utt2num_frames true \
             data/${x} exp/make_fbank/${x} ${fbankdir}
@@ -107,6 +109,8 @@ if [ ! -z $step02 ]; then
 
     utils/combine_data.sh --extra_files utt2num_frames data/${train_set}_org  data/train_clean_360 
     utils/combine_data.sh --extra_files utt2num_frames data/${train_dev}_org data/dev_clean
+yyh
+
 
     # remove utt having more than 3000 frames
     # remove utt having more than 400 characters
