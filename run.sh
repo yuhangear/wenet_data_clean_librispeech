@@ -74,7 +74,7 @@ set -o pipefail
 
 train_set=train_clean_360
 train_dev=dev
-recog_set="test_clean test_other dev_clean dev_other"
+recog_set="test_clean dev_clean "
 recog_set="test_clean"
 
 
@@ -107,8 +107,8 @@ if [ ! -z $step02 ]; then
         utils/fix_data_dir.sh data/${x}
     done
 
-    utils/combine_data.sh --extra_files utt2num_frames data/${train_set}_org  data/train_clean_360 
-    utils/combine_data.sh --extra_files utt2num_frames data/${train_dev}_org data/dev_clean
+    utils/combine_data.sh --extra_files utt2num_frames data/${train_set}  data/train_clean_360 
+    utils/combine_data.sh --extra_files utt2num_frames data/${train_dev} data/dev_clean
 
 
 
@@ -131,11 +131,11 @@ if [ ! -z $step03 ]; then
     echo "<unk> 1" >> ${dict} # <unk> must be 1
 
     # we borrowed these code and scripts which are related bpe from ESPnet.
-:<<!yu
+
     cut -f 2- -d" " data/${train_set}/text > data/lang_char/input.txt
     tools/spm_train --input=data/lang_char/input.txt --vocab_size=${nbpe} --model_type=${bpemode} --model_prefix=${bpemodel} --input_sentence_size=100000000
     
-!yu
+
     python3.8 tools/spm_encode --model=${bpemodel}.model --output_format=piece < data/lang_char/input.txt | tr ' ' '\n' | sort | uniq | awk '{print $0 " " NR+1}' >> ${dict}
     num_token=$(cat $dict | wc -l)
     echo "<sos/eos> $num_token" >> $dict # <eos>
@@ -146,7 +146,7 @@ fi
 if [ ! -z $step04 ]; then
     # Prepare wenet requried data
     echo "Prepare data, prepare requried format"
-    for x in dev ${recog_set} ${train_set}; do
+    for x in  ${recog_set} ${train_set}; do
         tools/format_data.sh --nj ${nj} --feat data/$x/feats.scp --bpecode ${bpemodel}.model \
             data/$x ${dict} > data/$x/format.data.tmp
 
