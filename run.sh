@@ -154,7 +154,7 @@ if [ ! -z $step04 ]; then
 
         # remove utt having more than 3000 frames
         # remove utt having more than 400 characters
-        pyrhon3.8 tools/remove_longshortdata.py \
+        python3.8 tools/remove_longshortdata.py \
             --min_input_len 0.5 \
             --max_input_len 20 \
             --max_output_len 400 \
