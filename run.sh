@@ -8,8 +8,8 @@
 
 steps=
 nj=10
-cmd="slurm.pl"
-train_cmd="slurm.pl"
+cmd="slurm.pl  --nodelist=node01"
+train_cmd="slurm.pl --nodelist=node01"
 # cmd="slurm.pl  --exclude=node0[3,4,5,6,7]"
 # train_cmd="slurm.pl  --exclude=node0[3,4,5,6,7]"
 
