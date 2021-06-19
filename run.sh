@@ -72,7 +72,7 @@ set -e
 set +u
 set -o pipefail
 
-train_set=train_clean_360
+train_set=train
 train_dev=dev
 recog_set="test_clean dev_clean "
 recog_set="test_clean"
@@ -86,12 +86,12 @@ if [ ! -z $step01 ]; then
     ### Task dependent. You have to make data the following preparation part by yourself.
     ### But you can utilize Kaldi recipes in most cases
     echo "stage 0: Data preparation"
-:<<!yuhang
-    for part in dev-clean test-clean   ; do
+
+    for part in dev-clean test-clean train_clean_360  ; do
         # use underscore-separated names in data directories.
         local/data_prep.sh ${datadir}/${part} data/${part//-/_}
     done
-!yuhang
+
     local/data_prep.sh /data/users/zpz505/LibriSpeech/train-clean-360 data/train_clean_360
 fi
 
@@ -102,13 +102,13 @@ if [ ! -z $step02 ]; then
     fbankdir=fbank
     # Generate the fbank features; by default 80-dimensional fbanks with pitch on each frame
 
-:<<!yuhang
+
     for x in dev_clean test_clean   train_clean_360; do
         steps/make_fbank_pitch.sh --cmd "./slurm.pl" --nj ${nj} --write_utt2num_frames true \
             data/${x} exp/make_fbank/${x} ${fbankdir}
         utils/fix_data_dir.sh data/${x}
     done
-!yuhang
+
     utils/combine_data.sh --extra_files utt2num_frames data/${train_set}  data/train_clean_360 
     utils/combine_data.sh --extra_files utt2num_frames data/${train_dev} data/dev_clean
 
