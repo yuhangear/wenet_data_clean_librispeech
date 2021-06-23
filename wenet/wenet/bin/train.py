@@ -26,16 +26,11 @@ import yaml
 from tensorboardX import SummaryWriter
 from torch.utils.data import DataLoader
 
-import sys
-sys.path.append('/home3/yuhang001/w2021/wenet/examples/librispeech/s3')
-
-
 from wenet.dataset.dataset import AudioDataset, CollateFunc
 from wenet.transformer.asr_model import init_asr_model
 from wenet.utils.checkpoint import load_checkpoint, save_checkpoint
 from wenet.utils.executor import Executor
 from wenet.utils.scheduler import WarmupLR
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='training your network')
@@ -79,6 +74,10 @@ if __name__ == '__main__':
                         action='store_true',
                         default=False,
                         help='Use pinned memory buffers used for reading')
+    parser.add_argument('--use_amp',
+                        action='store_true',
+                        default=False,
+                        help='Use automatic mixed precision training')
     parser.add_argument('--cmvn', default=None, help='global cmvn file')
 
     args = parser.parse_args()
@@ -165,12 +164,15 @@ if __name__ == '__main__':
     # Init asr model from configs
     model = init_asr_model(configs)
     print(model)
+    num_params = sum(p.numel() for p in model.parameters())
+    print('the number of model params: {}'.format(num_params))
 
     # !!!IMPORTANT!!!
     # Try to export the model by script, if fails, we should refine
     # the code to satisfy the script export requirements
-    script_model = torch.jit.script(model)
-    script_model.save(os.path.join(args.model_dir, 'init.zip'))
+    if args.rank == 0:
+        script_model = torch.jit.script(model)
+        script_model.save(os.path.join(args.model_dir, 'init.zip'))
     executor = Executor()
     # If specify checkpoint, load some info from checkpoint
     if args.checkpoint is not None:
@@ -206,6 +208,7 @@ if __name__ == '__main__':
     final_epoch = None
     configs['rank'] = args.rank
     configs['is_distributed'] = distributed
+    configs['use_amp'] = args.use_amp
     if start_epoch == 0 and args.rank == 0:
         save_model_path = os.path.join(model_dir, 'init.pt')
         save_checkpoint(model, save_model_path)
@@ -213,13 +216,17 @@ if __name__ == '__main__':
     # Start training loop
     executor.step = step
     scheduler.set_step(step)
+    # used for pytorch amp mixed precision training
+    scaler = None
+    if args.use_amp:
+        scaler = torch.cuda.amp.GradScaler()
     for epoch in range(start_epoch, num_epochs):
         if distributed:
             train_sampler.set_epoch(epoch)
         lr = optimizer.param_groups[0]['lr']
         logging.info('Epoch {} TRAIN info lr {}'.format(epoch, lr))
         executor.train(model, optimizer, scheduler, train_data_loader, device,
-                       writer, configs)
+                       writer, configs, scaler)
         total_loss, num_seen_utts = executor.cv(model, cv_data_loader, device,
                                                 configs)
         if args.world_size > 1:

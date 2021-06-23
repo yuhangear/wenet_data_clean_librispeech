@@ -17,7 +17,7 @@ class DecoderLayer(nn.Module):
         size (int): Input dimension.
         self_attn (torch.nn.Module): Self-attention module instance.
             `MultiHeadedAttention` instance can be used as the argument.
-        src_attn (torch.nn.Module): Self-attention module instance.
+        src_attn (torch.nn.Module): Inter-attention module instance.
             `MultiHeadedAttention` instance can be used as the argument.
         feed_forward (torch.nn.Module): Feed-forward module instance.
             `PositionwiseFeedForward` instance can be used as the argument.
@@ -83,10 +83,6 @@ class DecoderLayer(nn.Module):
             torch.Tensor: Encoded memory mask (#batch, maxlen_in).
 
         """
-        print("lalallalalala")
-        print(tgt)
-        print(tgt_mask)
-        print("dadadadadadaa")
         residual = tgt
         if self.normalize_before:
             tgt = self.norm1(tgt)
