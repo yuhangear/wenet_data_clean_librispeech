@@ -24,6 +24,9 @@ import torch
 import yaml
 from torch.utils.data import DataLoader
 
+import sys
+sys.path.append('/home3/yuhang001/w2021/wenet/examples/librispeech/s3')
+
 from wenet.dataset.dataset import AudioDataset, CollateFunc
 from wenet.transformer.asr_model import init_asr_model
 from wenet.utils.checkpoint import load_checkpoint
