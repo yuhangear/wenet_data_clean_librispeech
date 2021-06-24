@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
     raw_wav = configs['raw_wav']
 
-    
+    train_collate_func = CollateFunc(**configs['collate_conf'], raw_wav=raw_wav)
 
     cv_collate_conf = copy.deepcopy(configs['collate_conf'])
     # no augmenation on cv set
@@ -109,7 +109,6 @@ if __name__ == '__main__':
         cv_collate_conf['wav_distortion_conf']['wav_distortion_rate'] = 0
     cv_collate_func = CollateFunc(**cv_collate_conf, raw_wav=raw_wav)
 
-    train_collate_func = CollateFunc(**configs['collate_conf'], raw_wav=raw_wav,)
     dataset_conf = configs.get('dataset_conf', {})
     train_dataset = AudioDataset(args.train_data,
                                  **dataset_conf,
