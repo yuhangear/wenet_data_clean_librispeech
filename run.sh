@@ -39,7 +39,7 @@ dir=exp/sp_spec_aug
 average_checkpoint=true
 decode_checkpoint=$dir/final.pt
 # maybe you can try to adjust it if you can not get close results as README.md
-average_num=20
+average_num=2
 decode_modes="attention_rescoring ctc_greedy_search ctc_prefix_beam_search attention"
 
 . utils/parse_options.sh || exit 1;
