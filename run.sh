@@ -4,7 +4,7 @@
 
 
 
-#. ./path.sh || exit 1;
+. ./path.sh || exit 1;
 
 steps=
 nj=10
@@ -185,7 +185,7 @@ if [ ! -z $step05 ]; then
     for ((i = 0; i < $num_gpus; ++i)); do
     {
         gpu_id=$(echo $CUDA_VISIBLE_DEVICES | cut -d',' -f$[$i+1])
-        python wenet/bin/train.py --gpu $gpu_id \
+        wenet/bin/train.py --gpu $gpu_id \
             --config $train_config \
             --train_data data/$train_set/format.data \
             --cv_data data/dev/format.data \
@@ -225,7 +225,7 @@ if [ ! -z $step06 ]; then
     {
         test_dir=$dir/${test}_${mode}
         mkdir -p $test_dir
-        python wenet/bin/recognize.py --gpu 0 \
+        wenet/bin/recognize.py --gpu 0 \
             --mode $mode \
             --config $dir/train.yaml \
             --test_data data/$test/format.data \

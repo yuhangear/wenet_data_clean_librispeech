@@ -25,8 +25,8 @@ import torch.optim as optim
 import yaml
 from tensorboardX import SummaryWriter
 from torch.utils.data import DataLoader
-import sys
-sys.path.append('/home3/yuhang001/w2021/wenet/examples/librispeech/s3')
+# import sys
+# sys.path.append('/home3/yuhang001/w2021/wenet/examples/librispeech/s3')
 
 net.dataset.dataset import AudioDataset, CollateFunc
 from wenet.transformer.asr_model import init_asr_model
