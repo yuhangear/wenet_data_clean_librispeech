@@ -97,8 +97,7 @@ if __name__ == '__main__':
 
     raw_wav = configs['raw_wav']
 
-    train_collate_func = CollateFunc(**configs['collate_conf'],
-                                     raw_wav=raw_wav)
+    train_collate_func = CollateFunc(**configs['collate_conf'],raw_wav=raw_wav)
 
     cv_collate_conf = copy.deepcopy(configs['collate_conf'])
     # no augmenation on cv set
