@@ -185,7 +185,7 @@ if [ ! -z $step05 ]; then
     for ((i = 0; i < $num_gpus; ++i)); do
     {
         gpu_id=$(echo $CUDA_VISIBLE_DEVICES | cut -d',' -f$[$i+1])
-        wenet/bin/train.py --gpu $gpu_id \
+        python wenet/bin/train.py --gpu $gpu_id \
             --config $train_config \
             --train_data data/$train_set/format.data \
             --cv_data data/dev/format.data \
